@@ -1,0 +1,10 @@
+# Binários compilados
+finance-api-go
+*.exe
+
+# Arquivos de ambiente/segredos
+.env
+
+# Arquivos do editor
+.vscode/
+.idea/
