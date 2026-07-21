@@ -38,3 +38,30 @@ func CreateTransaction(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, newTransaction)
 }
+
+func GetTransactions(c *gin.Context) {
+	rows, err := database.DB.Query(`
+		SELECT id, description, amount, type, category, created_at
+		FROM transactions
+		ORDER BY created_at DESC
+	`)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+	
+	var transactions []models.Transaction
+
+	for rows.Next() {
+		var t models.Transaction
+		err := rows.Scan(&t.ID, &t.Description, &t.Amount, &t.Type, &t.Category, &t.CreatedAt)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		transactions = append(transactions, t)
+	}
+
+	c.JSON(http.StatusOK, transactions)
+}

@@ -13,6 +13,7 @@ func main() {
 	router := gin.Default()
 
 	router.POST("/transactions", handlers.CreateTransaction)
+	router.GET("/transactions", handlers.GetTransactions)
 
 	router.Run(":8080")
 }
