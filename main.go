@@ -1,0 +1,18 @@
+package main
+
+import (
+	"finance-api/database"
+	"finance-api/handlers"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	database.Connect()
+
+	router := gin.Default()
+
+	router.POST("/transactions", handlers.CreateTransaction)
+
+	router.Run(":8080")
+}
