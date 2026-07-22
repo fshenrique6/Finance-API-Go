@@ -162,3 +162,27 @@ func GetTransactionByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, transaction)
 }
+
+func GetSummary(c *gin.Context) {
+	var totalIncome, totalExpense float64
+
+	err := database.DB.QueryRow(`
+		SELECT
+			COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
+			COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
+		FROM transactions
+	`).Scan(&totalIncome, &totalExpense)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	balance := totalIncome - totalExpense
+
+	c.JSON(http.StatusOK, gin.H{
+		"total_income":  totalIncome,
+		"total_expense": totalExpense,
+		"balance":       balance,
+	})
+}
