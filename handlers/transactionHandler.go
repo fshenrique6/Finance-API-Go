@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
 
 	"finance-api/database"
@@ -87,4 +88,48 @@ func DeleteTransactionByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Transaction deleted successfully"})
+}
+
+func UpdateTransactionByID(c *gin.Context) {
+	id := c.Param("id")
+
+	var updatedTransaction models.Transaction
+	if err := c.ShouldBindJSON(&updatedTransaction); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	query := `
+		UPDATE transactions
+		SET description = $1, amount = $2, type = $3, category = $4
+		WHERE id = $5
+		RETURNING id, description, amount, type, category, created_at
+	`
+
+	err := database.DB.QueryRow(
+		query,
+		updatedTransaction.Description,
+		updatedTransaction.Amount,
+		updatedTransaction.Type,
+		updatedTransaction.Category,
+		id,
+	).Scan(
+		&updatedTransaction.ID,
+		&updatedTransaction.Description,
+		&updatedTransaction.Amount,
+		&updatedTransaction.Type,
+		&updatedTransaction.Category,
+		&updatedTransaction.CreatedAt,
+	)
+
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, updatedTransaction)
 }
