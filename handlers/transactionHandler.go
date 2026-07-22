@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"finance-api/database"
 	"finance-api/models"
@@ -132,4 +133,32 @@ func UpdateTransactionByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedTransaction)
+}
+
+func GetTransactionByID(c *gin.Context) {
+	id := c.Param("id")
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	var transaction models.Transaction
+	err = database.DB.QueryRow(`
+		SELECT id, description, amount, type, category, created_at
+		FROM transactions
+		WHERE id = $1
+	`, idInt).Scan(&transaction.ID, &transaction.Description, &transaction.Amount, &transaction.Type, &transaction.Category, &transaction.CreatedAt)
+
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, transaction)
 }
