@@ -5,11 +5,12 @@ Uma API REST para controle de gastos e receitas pessoais, desenvolvida em Go com
 ![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=flat&logo=go&logoColor=white)
 ![Gin](https://img.shields.io/badge/Gin-Framework-00ADD8?style=flat)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
 ## 📖 Sobre o projeto
 
-A **Finance API** é uma API REST para gerenciar transações financeiras pessoais (entradas e saídas), com persistência em PostgreSQL. Foi construída com foco em praticar conceitos de desenvolvimento backend em Go: arquitetura em camadas, queries SQL parametrizadas, validação de dados, tratamento de erros e agregação de dados via SQL.
+A **Finance API** é uma API REST para gerenciar transações financeiras pessoais (entradas e saídas), com persistência em PostgreSQL. Foi construída com foco em praticar conceitos de desenvolvimento backend em Go: arquitetura em camadas, queries SQL parametrizadas, validação de dados, tratamento de erros, agregação de dados via SQL e containerização com Docker.
 
 ## ✨ Funcionalidades
 
@@ -22,20 +23,29 @@ A **Finance API** é uma API REST para gerenciar transações financeiras pessoa
 
 ## 🚀 Como usar
 
-### Pré-requisitos
+### Opção 1 — Com Docker (recomendado)
 
+**Pré-requisitos:** [Docker](https://docs.docker.com/get-docker/) e Docker Compose
+
+```bash
+git clone https://github.com/fshenrique6/Finance-API-Go.git
+cd Finance-API-Go
+docker compose up --build
+```
+
+Isso sobe automaticamente a API e o banco PostgreSQL já conectados entre si, com a tabela criada via `init.sql`. O servidor fica disponível em `http://localhost:8080`.
+
+### Opção 2 — Sem Docker (ambiente local)
+
+**Pré-requisitos:**
 - [Go](https://go.dev/dl/) 1.22 ou superior
 - [PostgreSQL](https://www.postgresql.org/) 14 ou superior
-
-### Instalação
 
 ```bash
 git clone https://github.com/fshenrique6/Finance-API-Go.git
 cd Finance-API-Go
 go mod download
 ```
-
-### Configuração do banco de dados
 
 Crie o usuário, o banco e a tabela necessários:
 
@@ -55,13 +65,21 @@ CREATE TABLE transactions (
 );
 ```
 
-### Rodando a aplicação
+Copie o arquivo de exemplo de variáveis de ambiente e ajuste se necessário:
+
+```bash
+cp .env.example .env
+```
+
+Rode a aplicação:
 
 ```bash
 go run main.go
 ```
 
 O servidor sobe em `http://localhost:8080`.
+
+> **Nota:** as credenciais usadas nos exemplos acima são apenas para desenvolvimento local e nunca devem ser usadas assim em produção.
 
 ## 📚 Endpoints
 
@@ -158,6 +176,10 @@ GET /summary
 
 ```
 finance-api/
+├── Dockerfile                    # Build da imagem da API (multi-stage)
+├── docker-compose.yml            # Orquestração da API + PostgreSQL
+├── init.sql                      # Script de criação da tabela no container do banco
+├── .env.example                  # Modelo de variáveis de ambiente
 ├── go.mod
 ├── go.sum
 ├── main.go                       # Ponto de entrada e definição das rotas
@@ -174,16 +196,17 @@ finance-api/
 - [Go](https://go.dev/)
 - [Gin](https://github.com/gin-gonic/gin) — framework web
 - [pgx](https://github.com/jackc/pgx) — driver PostgreSQL
+- [Docker](https://www.docker.com/) e Docker Compose — containerização da API e do banco
 - Queries SQL parametrizadas (proteção contra SQL injection)
 - Validação de dados via `binding` tags
 - Agregação de dados com `SUM`, `CASE WHEN` e `COALESCE`
+- Variáveis de ambiente para configuração (`.env`)
 - Arquitetura em camadas (models, handlers, database)
 
 ## 🔮 Próximos passos
 
 - [ ] Filtros na listagem (por categoria, tipo ou período)
 - [ ] Paginação nos resultados
-- [ ] Variáveis de ambiente para credenciais do banco (`.env`)
 - [ ] Testes unitários
 - [ ] Autenticação de usuários
 
@@ -203,11 +226,12 @@ A REST API for tracking personal income and expenses, built in Go with Gin and P
 ![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=flat&logo=go&logoColor=white)
 ![Gin](https://img.shields.io/badge/Gin-Framework-00ADD8?style=flat)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 
 ## 📖 About the project
 
-**Finance API** is a REST API for managing personal financial transactions (income and expenses), backed by PostgreSQL. It was built to practice backend development concepts in Go: layered architecture, parameterized SQL queries, data validation, error handling, and data aggregation via SQL.
+**Finance API** is a REST API for managing personal financial transactions (income and expenses), backed by PostgreSQL. It was built to practice backend development concepts in Go: layered architecture, parameterized SQL queries, data validation, error handling, data aggregation via SQL, and containerization with Docker.
 
 ## ✨ Features
 
@@ -220,20 +244,29 @@ A REST API for tracking personal income and expenses, built in Go with Gin and P
 
 ## 🚀 Getting started
 
-### Prerequisites
+### Option 1 — With Docker (recommended)
 
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+
+```bash
+git clone https://github.com/fshenrique6/Finance-API-Go.git
+cd Finance-API-Go
+docker compose up --build
+```
+
+This automatically spins up the API and a PostgreSQL container, already connected to each other, with the table created via `init.sql`. The server will be available at `http://localhost:8080`.
+
+### Option 2 — Without Docker (local environment)
+
+**Prerequisites:**
 - [Go](https://go.dev/dl/) 1.22 or higher
 - [PostgreSQL](https://www.postgresql.org/) 14 or higher
-
-### Installation
 
 ```bash
 git clone https://github.com/fshenrique6/Finance-API-Go.git
 cd Finance-API-Go
 go mod download
 ```
-
-### Database setup
 
 Create the required user, database, and table:
 
@@ -253,15 +286,21 @@ CREATE TABLE transactions (
 );
 ```
 
-> **Note:** these credentials are for local development only and should never be used as-is in production.
+Copy the example environment file and adjust it if needed:
 
-### Running the app
+```bash
+cp .env.example .env
+```
+
+Run the app:
 
 ```bash
 go run main.go
 ```
 
 The server starts at `http://localhost:8080`.
+
+> **Note:** the credentials used in the examples above are for local development only and should never be used as-is in production.
 
 ## 📚 Endpoints
 
@@ -358,6 +397,10 @@ GET /summary
 
 ```
 finance-api/
+├── Dockerfile                    # API image build (multi-stage)
+├── docker-compose.yml            # Orchestrates the API + PostgreSQL
+├── init.sql                      # Table creation script for the database container
+├── .env.example                  # Environment variables template
 ├── go.mod
 ├── go.sum
 ├── main.go                       # Entry point and route definitions
@@ -374,16 +417,17 @@ finance-api/
 - [Go](https://go.dev/)
 - [Gin](https://github.com/gin-gonic/gin) — web framework
 - [pgx](https://github.com/jackc/pgx) — PostgreSQL driver
+- [Docker](https://www.docker.com/) and Docker Compose — API and database containerization
 - Parameterized SQL queries (protection against SQL injection)
 - Data validation via `binding` tags
 - Data aggregation using `SUM`, `CASE WHEN`, and `COALESCE`
+- Environment variables for configuration (`.env`)
 - Layered architecture (models, handlers, database)
 
 ## 🔮 Roadmap
 
 - [ ] Filters for listing (by category, type, or date range)
 - [ ] Pagination
-- [ ] Environment variables for database credentials (`.env`)
 - [ ] Unit tests
 - [ ] User authentication
 
