@@ -6,7 +6,7 @@ Uma API REST para controle de gastos e receitas pessoais, desenvolvida em Go com
 ![Gin](https://img.shields.io/badge/Gin-Framework-00ADD8?style=flat)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+![Status](https://img.shields.io/badge/status-conclu%C3%ADdo-brightgreen)
 
 ## 📖 Sobre o projeto
 
@@ -227,7 +227,7 @@ A REST API for tracking personal income and expenses, built in Go with Gin and P
 ![Gin](https://img.shields.io/badge/Gin-Framework-00ADD8?style=flat)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white)
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-completed-brightgreen)
 
 ## 📖 About the project
 
