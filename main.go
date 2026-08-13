@@ -12,6 +12,7 @@ func main() {
 
 	router := gin.Default()
 
+	router.POST("/register", handlers.Register)
 	router.POST("/transactions", handlers.CreateTransaction)
 	router.GET("/transactions", handlers.GetTransactions)
 	router.DELETE("/transactions/:id", handlers.DeleteTransactionByID)
