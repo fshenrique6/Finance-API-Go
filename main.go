@@ -3,6 +3,7 @@ package main
 import (
 	"finance-api/database"
 	"finance-api/handlers"
+	"finance-api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,14 +13,21 @@ func main() {
 
 	router := gin.Default()
 
-	router.POST("/transactions", handlers.CreateTransaction)
-	router.GET("/transactions", handlers.GetTransactions)
-	router.DELETE("/transactions/:id", handlers.DeleteTransactionByID)
-	router.PUT("/transactions/:id", handlers.UpdateTransactionByID)
-	router.GET("/transactions/:id", handlers.GetTransactionByID)
-	router.GET("/summary", handlers.GetSummary)
+	// public routes - dont require authentication
 	router.POST("/register", handlers.Register)
 	router.POST("/login", handlers.Login)
+
+	// protected routes - require authentication
+	authorized := router.Group("/")
+	authorized.Use(middleware.AuthRequired())
+	{
+		authorized.POST("/transactions", handlers.CreateTransaction)
+		authorized.GET("/transactions", handlers.GetTransactions)
+		authorized.GET("/transactions/:id", handlers.GetTransactionByID)
+		authorized.PUT("/transactions/:id", handlers.UpdateTransactionByID)
+		authorized.DELETE("/transactions/:id", handlers.DeleteTransactionByID)
+		authorized.GET("/summary", handlers.GetSummary)
+	}
 
 	router.Run(":8080")
 }

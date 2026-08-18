@@ -1,5 +1,5 @@
 # Binários compilados
-finance-api-go
+finance-api
 *.exe
 
 # Arquivos de ambiente/segredos
