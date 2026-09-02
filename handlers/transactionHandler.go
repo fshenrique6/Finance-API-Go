@@ -12,6 +12,8 @@ import (
 )
 
 func CreateTransaction(c *gin.Context) {
+	userID := c.MustGet("user_id").(int)
+
 	var newTransaction models.Transaction
 
 	if err := c.ShouldBindJSON(&newTransaction); err != nil {
@@ -20,8 +22,8 @@ func CreateTransaction(c *gin.Context) {
 	}
 
 	query := `
-		INSERT INTO transactions (description, amount, type, category)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO transactions (description, amount, type, category, user_id)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, created_at
 	`
 
@@ -31,6 +33,7 @@ func CreateTransaction(c *gin.Context) {
 		newTransaction.Amount,
 		newTransaction.Type,
 		newTransaction.Category,
+		userID,
 	).Scan(&newTransaction.ID, &newTransaction.CreatedAt)
 
 	if err != nil {
