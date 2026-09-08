@@ -45,11 +45,14 @@ func CreateTransaction(c *gin.Context) {
 }
 
 func GetTransactions(c *gin.Context) {
+	userID := c.MustGet("user_id").(int)
+
 	rows, err := database.DB.Query(`
 		SELECT id, description, amount, type, category, created_at
 		FROM transactions
+		WHERE user_id = $1
 		ORDER BY created_at DESC
-	`)
+	`, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
