@@ -75,9 +75,10 @@ func GetTransactions(c *gin.Context) {
 }
 
 func DeleteTransactionByID(c *gin.Context) {
+	userID := c.MustGet("user_id").(int)
 	id := c.Param("id")
 
-	result, err := database.DB.Exec("DELETE FROM transactions WHERE id = $1", id)
+	result, err := database.DB.Exec("DELETE FROM transactions WHERE id = $1 AND user_id = $2", id, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -98,6 +99,7 @@ func DeleteTransactionByID(c *gin.Context) {
 }
 
 func UpdateTransactionByID(c *gin.Context) {
+	userID := c.MustGet("user_id").(int)
 	id := c.Param("id")
 
 	var updatedTransaction models.Transaction
@@ -109,7 +111,7 @@ func UpdateTransactionByID(c *gin.Context) {
 	query := `
 		UPDATE transactions
 		SET description = $1, amount = $2, type = $3, category = $4
-		WHERE id = $5
+		WHERE id = $5 AND user_id = $6
 		RETURNING id, description, amount, type, category, created_at
 	`
 
@@ -120,6 +122,7 @@ func UpdateTransactionByID(c *gin.Context) {
 		updatedTransaction.Type,
 		updatedTransaction.Category,
 		id,
+		userID,
 	).Scan(
 		&updatedTransaction.ID,
 		&updatedTransaction.Description,
@@ -171,6 +174,7 @@ func GetTransactionByID(c *gin.Context) {
 }
 
 func GetSummary(c *gin.Context) {
+	userID := c.MustGet("user_id").(int)
 	var totalIncome, totalExpense float64
 
 	err := database.DB.QueryRow(`
@@ -178,7 +182,8 @@ func GetSummary(c *gin.Context) {
 			COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
 			COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
 		FROM transactions
-	`).Scan(&totalIncome, &totalExpense)
+		WHERE user_id = $1
+	`, userID).Scan(&totalIncome, &totalExpense)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
