@@ -12,5 +12,6 @@ CREATE TABLE transactions (
     amount NUMERIC(10, 2) NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
     category TEXT NOT NULL,
+    user_id INTEGER REFERENCES users(id),
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
